@@ -1,4 +1,4 @@
-package com.cnk24.udp;
+package com.cnk24.udp_broadcast;
 
 import org.junit.Test;
 

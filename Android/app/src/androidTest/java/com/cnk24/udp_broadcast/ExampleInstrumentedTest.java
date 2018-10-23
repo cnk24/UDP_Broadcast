@@ -1,4 +1,4 @@
-package com.cnk24.udp;
+package com.cnk24.udp_broadcast;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.cnk24.udp", appContext.getPackageName());
+        assertEquals("com.cnk24.udp_broadcast", appContext.getPackageName());
     }
 }

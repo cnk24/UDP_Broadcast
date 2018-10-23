@@ -8,3 +8,13 @@ D:\1. Project\Android\UDP_PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast
 D:\1. Project\Android\UDP_PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.csproj.CoreCompileInputs.cache
 D:\1. Project\Android\UDP_PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.exe
 D:\1. Project\Android\UDP_PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.pdb
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\bin\Debug\UDP_Broadcast.exe.config
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\bin\Debug\UDP_Broadcast.exe
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\bin\Debug\UDP_Broadcast.pdb
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.csprojAssemblyReference.cache
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.frmMain.resources
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.Properties.Resources.resources
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.csproj.GenerateResource.cache
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.csproj.CoreCompileInputs.cache
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.exe
+D:\GITHUB\UDP_Broadcast\PC\UDP_Broadcast\UDP_Broadcast\obj\Debug\UDP_Broadcast.pdb

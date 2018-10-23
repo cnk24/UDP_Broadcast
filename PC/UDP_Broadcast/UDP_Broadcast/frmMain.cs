@@ -47,26 +47,28 @@ namespace UDP_Broadcast
             //client.Close();
 
 
-            //UdpClient udp = new UdpClient();
-            //udp.EnableBroadcast = true;
+
+
+            UdpClient udp = new UdpClient();
+            udp.EnableBroadcast = true;
 
             //udp.Client.ReceiveTimeout = 3000;
 
-            //IPEndPoint broad = new IPEndPoint(IPAddress.Broadcast, PORT_NUMBER); // IPAddress.Broadcast == 255.255.255.255
-            //byte[] buf = Encoding.UTF8.GetBytes(message);
-            //udp.Send(buf, buf.Length, broad);
+            IPEndPoint broad = new IPEndPoint(IPAddress.Broadcast, PORT_NUMBER); // IPAddress.Broadcast == 255.255.255.255
+            byte[] buf = Encoding.UTF8.GetBytes(message);
+            udp.Send(buf, buf.Length, broad);
 
 
 
 
-            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            s.EnableBroadcast = true;
+            //Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            //s.EnableBroadcast = true;
 
-            byte[] sendbuf = Encoding.ASCII.GetBytes("HELLO");
-            EndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT_NUMBER);
+            //byte[] sendbuf = Encoding.ASCII.GetBytes("HELLO");
+            //EndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT_NUMBER);
 
-            // UDP 브로드캐스팅 패킷을 네트워크에 전송
-            s.SendTo(sendbuf, targetEndPoint);
+            //// UDP 브로드캐스팅 패킷을 네트워크에 전송
+            //s.SendTo(sendbuf, targetEndPoint);
 
 
         }
