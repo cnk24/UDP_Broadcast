@@ -23,7 +23,7 @@ namespace UDP_Broadcast
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            Send("TEST");
+            
 
 
             //Thread thread = new Thread(new ThreadStart(ThreadProc));
@@ -36,15 +36,28 @@ namespace UDP_Broadcast
         }
 
 
-
-        public void Send(string message)
+        private string getIPAddress()
         {
-            //UdpClient client = new UdpClient();
-            //IPEndPoint ip = new IPEndPoint(IPAddress.Parse("255.255.255.255"), PORT_NUMBER);
-            //client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            //byte[] bytes = Encoding.UTF8.GetBytes(message);
-            //client.Send(bytes, bytes.Length, ip);
-            //client.Close();
+            IPHostEntry host;
+            string localIP = "";
+            host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIP = ip.ToString();
+                }
+            }
+            return localIP;
+        }
+
+
+
+        public void BroadcastFind(string message)
+        {
+
+            //string ipAddr = getIPAddress();
+
 
 
 
@@ -52,23 +65,14 @@ namespace UDP_Broadcast
             UdpClient udp = new UdpClient();
             udp.EnableBroadcast = true;
 
-            //udp.Client.ReceiveTimeout = 3000;
+            udp.Client.ReceiveTimeout = 3000;
 
             IPEndPoint broad = new IPEndPoint(IPAddress.Broadcast, PORT_NUMBER); // IPAddress.Broadcast == 255.255.255.255
+
             byte[] buf = Encoding.UTF8.GetBytes(message);
             udp.Send(buf, buf.Length, broad);
 
 
-
-
-            //Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //s.EnableBroadcast = true;
-
-            //byte[] sendbuf = Encoding.ASCII.GetBytes("HELLO");
-            //EndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, PORT_NUMBER);
-
-            //// UDP 브로드캐스팅 패킷을 네트워크에 전송
-            //s.SendTo(sendbuf, targetEndPoint);
 
 
         }
@@ -77,21 +81,8 @@ namespace UDP_Broadcast
 
         static private void ThreadProc()
         {
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 20003);
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Any, PORT_NUMBER);
             UdpClient srv = new UdpClient(ipep);
-
-
-
-
-
-
-
-            byte[] ttt = new byte[3];
-            ttt[0] = 0x31;
-            ttt[1] = 0x32;
-            ttt[2] = 0x33;
-            srv.Send(ttt, ttt.Length);
-
 
 
 
@@ -107,6 +98,14 @@ namespace UDP_Broadcast
 
 
         }
+
+
+
+        private void btn_test_Click(object sender, EventArgs e)
+        {
+            BroadcastFind("TEST");
+        }
+
 
 
 

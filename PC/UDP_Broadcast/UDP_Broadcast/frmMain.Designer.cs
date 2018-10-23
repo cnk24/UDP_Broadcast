@@ -28,13 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.btn_test = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // btn_test
+            // 
+            this.btn_test.Location = new System.Drawing.Point(31, 42);
+            this.btn_test.Name = "btn_test";
+            this.btn_test.Size = new System.Drawing.Size(156, 107);
+            this.btn_test.TabIndex = 0;
+            this.btn_test.Text = "TEST SEND";
+            this.btn_test.UseVisualStyleBackColor = true;
+            this.btn_test.Click += new System.EventHandler(this.btn_test_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(527, 409);
+            this.Controls.Add(this.btn_test);
             this.Name = "frmMain";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
@@ -44,6 +56,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Button btn_test;
     }
 }
 
