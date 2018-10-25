@@ -5,12 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:text="Send Hello"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/Hello"
-        android:layout_alignParentLeft="true"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:text="Join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Join"
+            android:layout_alignParentLeft="true"/>
+
+        <Button
+            android:text="Re Join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ReJoin"
+            android:layout_alignParentLeft="true"/>
+
+        <Button
+            android:text="Backup Start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Start"
+            android:layout_alignParentLeft="true"/>
+
+    </LinearLayout>
 
     <TextView
         android:text="Echo Text"
