@@ -23,8 +23,10 @@ namespace UDP_Broadcast
             JOININFO,
             PHONEINFO,
             ALBUMNAME,
-            IMAGE,
-            VIDEO,
+            IMAGEINFO,
+            IMAGEFILE,
+            VIDEOINFO,
+            VIDEOFILE,
             END
         }
         private COMM_STEP eCommStep;
@@ -127,63 +129,8 @@ namespace UDP_Broadcast
 
             string path = node.FullPath;
 
-            //ViewDirectoryList(path);
             AddListViewLargeImageItem(path);
         }
-
-
-
-
-
-        //private void ViewDirectoryList(string path)
-        //{
-        //    lb_path.Text = path;
-
-        //    try
-        //    {
-        //        listView1.Items.Clear();    // 전에 있던 목록들을 지우고 새로 나열함.
-
-        //        string[] directories = Directory.GetDirectories(path);
-
-        //        foreach (string directory in directories)    // 폴더 나열
-        //        {
-        //            DirectoryInfo info = new DirectoryInfo(directory);
-
-        //            if ((info.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-        //            {
-        //                ListViewItem item = new ListViewItem();
-        //                item.Name = info.Name;
-        //                item.ImageKey = "big_folder";
-        //                listView1.Items.Add(item);
-        //            }
-        //        }
-
-        //        string[] files = Directory.GetFiles(path);
-
-        //        foreach (string file in files)    // 파일 나열
-        //        {
-        //            FileInfo info = new FileInfo(file);
-        //            ListViewItem item = new ListViewItem();
-        //            item.Name = info.Name;
-        //            item.ImageKey = "file";
-        //            listView1.Items.Add(item);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("ViewDirectoryList : " + ex.Message);
-        //    }
-        //}
-
-
-
-
-
-
-
-
-
-
 
         /// <summary>
         /// 해당 폴더 경로의 아이콘들을 ListView에 추가한다.
@@ -237,24 +184,55 @@ namespace UDP_Broadcast
             foreach (string file in files)
             {
                 FileInfo info = new FileInfo(file);
-                Icon icon = IconHelper.GetIcon(info.FullName, true);
-                imageList.Images.Add(icon);
+
+                if (CheckImageFile(info.Extension))
+                {
+                    Image image = GetThumbnail(info.FullName);
+                    imageList.Images.Add(image);
+                }
+                else
+                {
+                    Icon icon = IconHelper.GetIcon(info.FullName, true);
+                    imageList.Images.Add(icon);
+                }
+                
                 listView1.Items.Add(info.Name, imageList.Images.Count - 1);
             }
         }
 
         
+        private bool CheckImageFile(string ext)
+        {
+            if (ext.Equals(".png") || ext.Equals(".jpg") || ext.Equals(".gif") || ext.Equals(".bmp") || ext.Equals(".tif"))
+            {
+                return true;
+            }
 
+            return false;
+        }
 
+        private Image GetThumbnail(string filePath)
+        {
+            Image image = Image.FromFile(filePath);
+            int nRate = 0;
 
+            if (image.Width > image.Height)
+            {
+                nRate = image.Width / 64;
+            }
+            else
+            {
+                nRate = image.Height / 64;
+            }
 
+            int nWidth = image.Width / nRate;
+            int nHeight = image.Height / nRate;
 
+            Image thumb = image.GetThumbnailImage(nWidth, nHeight, () => false, IntPtr.Zero);
+            image.Dispose();
 
-
-
-
-
-
+            return thumb;
+        }
 
         private string getIPAddress()
         {
@@ -314,10 +292,11 @@ namespace UDP_Broadcast
 
         private void TCPThreadProc()
         {
+            BinaryWriter writer = null;
             Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint ipep = new IPEndPoint(IPAddress.Any, PORT_NUMBER);
             server.Bind(ipep);
-            server.Listen(10);
+            server.Listen(1);
 
             Socket client = server.Accept();
 
@@ -363,12 +342,35 @@ namespace UDP_Broadcast
 
                             }
                             break;
-                        case COMM_STEP.IMAGE:
+                        case COMM_STEP.IMAGEINFO:
                             {
 
                             }
                             break;
-                        case COMM_STEP.VIDEO:
+                        case COMM_STEP.IMAGEFILE:
+                            {
+                                // 1. 파일명 받기
+                                // 2. 파일 전송 받기
+
+                                string filePath = "" + sRecvData;
+
+                                FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+                                writer = new BinaryWriter(fileStream);
+
+                                while (client.Receive(data) > 0)
+                                {
+                                    writer.Write(data, 0, data.Length);
+                                }
+
+
+                            }
+                            break;
+                        case COMM_STEP.VIDEOINFO:
+                            {
+
+                            }
+                            break;
+                        case COMM_STEP.VIDEOFILE:
                             {
 
                             }
@@ -391,8 +393,9 @@ namespace UDP_Broadcast
             }
             finally
             {
-                client.Close();
-                server.Close();
+                if (writer != null) writer.Close();
+                if (client != null) client.Close();
+                if (server != null) server.Close();
             }
 
         }

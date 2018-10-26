@@ -3,7 +3,6 @@ package com.cnk24.udp_broadcast;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
@@ -16,6 +15,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -34,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
         JOININFO,
         PHONEINFO,
         ALBUMNAME,
-        IMAGE,
-        VIDEO,
+        IMAGEINFO,
+        IMAGEFILE,
+        VIDEOINFO,
+        VIDEOFILE,
         END
     }
     public COMM_STEP eCommStep;
@@ -48,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     public Button btnStart = null;
 
     private volatile boolean _shouldStop;
+    private Socket mSocket = null;
     private InetAddress mServerIP;
 
     @Override
@@ -105,6 +111,14 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         _shouldStop = true;
+        try {
+            if (mSocket != null) {
+                mSocket.close();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 버튼 컨트롤 메세지 핸들러
@@ -221,98 +235,127 @@ public class MainActivity extends AppCompatActivity {
 
     class InfoTrans extends Thread {
         public void run() {
+            _shouldStop = false;
+
             try {
-                _shouldStop = false;
+                mSocket = new Socket(mServerIP, PORT);
+                BufferedReader socket_in = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+                PrintWriter socket_out = new PrintWriter(mSocket.getOutputStream(), true);
 
-                Socket socket = new Socket(mServerIP, PORT);
-                BufferedReader socket_in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter socket_out = new PrintWriter(socket.getOutputStream(), true);
+                try {
 
-                while (!_shouldStop)
-                {
-                    String sSendData = null;
+                    while (!_shouldStop)
+                    {
+                        String sSendData = null;
 
-                    if (eCommStep == COMM_STEP.JOININFO) {
-                        sSendData = String.format("%s", getIPAddress());
-                        //packet.setData(sSendData.getBytes());
-                        //socket.send(packet);
-                    }
-                    else if (eCommStep == COMM_STEP.PHONEINFO) {
-                        sSendData = String.format("%s", getDeviceName());
-                        //packet.setData(sSendData.getBytes());
-                        //socket.send(packet);
-                    }
-
-                    if (sSendData == null) continue;
-
-                    socket_out.print(sSendData);
-                    socket_out.flush();
-
-                    char[] data = new char[100];
-                    socket_in.read(data);
-
-                    String sRecvData = new String(data).trim();
-                    Log.d("UDP","Return Data =>  " + sRecvData);
-
-                    if (sRecvData.equals("OK")) {
                         if (eCommStep == COMM_STEP.JOININFO) {
-                            eCommStep = COMM_STEP.PHONEINFO;
+                            sSendData = String.format("%s", getIPAddress());
+                            //packet.setData(sSendData.getBytes());
+                            //socket.send(packet);
                         }
-                        else if(eCommStep == COMM_STEP.PHONEINFO) {
-                            eCommStep = COMM_STEP.ALBUMNAME;
-                            _shouldStop = true;
+                        else if (eCommStep == COMM_STEP.PHONEINFO) {
+                            sSendData = String.format("%s", getDeviceName());
+                            //packet.setData(sSendData.getBytes());
+                            //socket.send(packet);
                         }
+
+                        if (sSendData == null) continue;
+
+                        socket_out.print(sSendData);
+                        socket_out.flush();
+
+                        char[] data = new char[100];
+                        socket_in.read(data);
+
+                        String sRecvData = new String(data).trim();
+                        Log.d("UDP","Return Data =>  " + sRecvData);
+
+                        if (sRecvData.equals("OK")) {
+                            if (eCommStep == COMM_STEP.JOININFO) {
+                                eCommStep = COMM_STEP.PHONEINFO;
+                            }
+                            else if(eCommStep == COMM_STEP.PHONEINFO) {
+                                eCommStep = COMM_STEP.ALBUMNAME;
+                                _shouldStop = true;
+                            }
+                        }
+
                     }
-
                 }
-
-                socket_in.close();
-                socket_out.close();
-                socket.close();
-            } catch(IOException e) {
-                Log.d("UDP","error  " + e.toString());
-            } catch(Exception e) {
-                Log.d("UDP","error  " + e.toString());
+                catch(Exception e) {
+                    Log.d("TCP","error  " + e.toString());
+                }
+                finally {
+                    socket_in.close();
+                    socket_out.close();
+                }
             }
-            finally {
-
+            catch (Exception e) {
+                Log.d("TCP","error  " + e.toString());
             }
+
         }
     }
 
 
     class FileTrans extends Thread {
         public void run() {
+            _shouldStop = false;
+
             try {
-                _shouldStop = false;
+                BufferedReader socket_in = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+                PrintWriter socket_out = new PrintWriter(mSocket.getOutputStream(), true);
 
-                while (!_shouldStop)
-                {
-                    DatagramSocket socket = new DatagramSocket(PORT, mServerIP);
+                try {
+                    while (!_shouldStop)
+                    {
+                        if (eCommStep == COMM_STEP.ALBUMNAME) {
 
-                    String sRecvData;
-                    byte[] buf = new byte[1024];
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                        }
+                        else if (eCommStep == COMM_STEP.IMAGEINFO) {
 
-                    if (eCommStep == COMM_STEP.ALBUMNAME) {
+                        }
+                        else if (eCommStep == COMM_STEP.IMAGEFILE) {
 
+                            // 1. 파일명 보내기
+                            // 2. 파일 전송
+
+
+                            DataInputStream dis = new DataInputStream(new FileInputStream(new File("")));
+                            DataOutputStream dos = new DataOutputStream(mSocket.getOutputStream());
+                            byte[] buf = new byte[1024];
+                            while(dis.read(buf) > 0)
+                            {
+                                dos.write(buf);
+                                dos.flush();
+                            }
+                            dos.close();
+
+
+                        }
+                        else if (eCommStep == COMM_STEP.VIDEOINFO) {
+
+                        }
+                        else if (eCommStep == COMM_STEP.VIDEOFILE) {
+
+                        }
+                        else if (eCommStep == COMM_STEP.END) {
+                            _shouldStop = true;
+                        }
                     }
-                    else if (eCommStep == COMM_STEP.IMAGE) {
-
-                    }
-                    else if (eCommStep == COMM_STEP.VIDEO) {
-
-                    }
-                    else if (eCommStep == COMM_STEP.END) {
-                        _shouldStop = true;
-                    }
-
-                    socket.close();
                 }
-
-            } catch(Exception e) {
-                Log.d("UDP","error  " + e.toString());
+                catch(Exception e) {
+                    Log.d("TCP","error  " + e.toString());
+                }
+                finally {
+                    socket_in.close();
+                    socket_out.close();
+                }
             }
+            catch(Exception e) {
+                Log.d("TCP","error  " + e.toString());
+            }
+
         }
     }
 
